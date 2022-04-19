@@ -69,6 +69,8 @@ const renderElement = async (element: HTMLElement, opts: Partial<Options>): Prom
         windowOptions.windowHeight
     );
 
+    const domCloningStart = performance.now();
+
     const context = new Context(contextOptions, windowBounds);
 
     const foreignObjectRendering = opts.foreignObjectRendering ?? false;
@@ -94,6 +96,8 @@ const renderElement = async (element: HTMLElement, opts: Partial<Options>): Prom
     }
 
     const container = await documentCloner.toIFrame(ownerDocument, windowBounds);
+
+    const domCloningFinish = performance.now();
 
     const {width, height, left, top} =
         isBodyElement(clonedElement) || isHTMLElement(clonedElement)
@@ -144,7 +148,14 @@ const renderElement = async (element: HTMLElement, opts: Partial<Options>): Prom
         }
     }
 
+    const renderingFinish = performance.now();
+
     context.logger.debug(`Finished rendering`);
+    // Crude, just for testing purposes
+    /* eslint-disable no-console */
+    console.log(`Clone duration:  ${domCloningFinish - domCloningStart}`);
+    console.log(`Render duration: ${renderingFinish - domCloningFinish}`);
+    /* eslint-enable no-console */
     return canvas;
 };
 
